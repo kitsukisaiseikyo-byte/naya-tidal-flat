@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -8,64 +7,338 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/recharts@2.5.0/dist/Recharts.js"></script>
+    <script src="https://unpkg.com/recharts@2.10.3/dist/Recharts.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
     <div id="root"></div>
     
     <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
         const { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } = Recharts;
         
-        // ここに React コンポーネントを配置
-        // （Artifact の TidalFlatSystem コンポーネントをコピー）
-        
+        // Lucide icons
+        const Calendar = () => <span>📅</span>;
+        const Sun = () => <span>☀️</span>;
+        const Moon = () => <span>🌙</span>;
+        const Info = () => <span>ℹ️</span>;
+        const Settings = () => <span>⚙️</span>;
+        const RefreshCw = () => <span>🔄</span>;
+        const Clock = () => <span>🕐</span>;
+        const TrendingUp = () => <span>📈</span>;
+
         const TidalFlatSystem = () => {
-            const [threshold, setThreshold] = React.useState(120);
-            const [observedData, setObservedData] = React.useState([]);
-            const [predictionData, setPredictionData] = React.useState([]);
-            const [loading, setLoading] = React.useState(true);
+            const [threshold, setThreshold] = useState(120);
+            const [minTime, setMinTime] = useState(6);
+            const [maxTime, setMaxTime] = useState(18);
+            const [showSettings, setShowSettings] = useState(false);
+            const [chartDays, setChartDays] = useState(7);
+            const [activeTab, setActiveTab] = useState('prediction');
             
-            React.useEffect(() => {
+            const [observedData, setObservedData] = useState([]);
+            const [predictionData, setPredictionData] = useState([]);
+            const [lastUpdate, setLastUpdate] = useState({
+                observed: null,
+                prediction: null
+            });
+            const [loading, setLoading] = useState(true);
+            const [error, setError] = useState(null);
+
+            useEffect(() => {
                 const loadData = async () => {
                     try {
+                        setError(null);
+                        
                         // 実測データ読み込み
                         const obsResponse = await fetch('./data/observed/latest.json');
-                        const obsData = await obsResponse.json();
+                        if (obsResponse.ok) {
+                            const obsData = await obsResponse.json();
+                            setObservedData(obsData);
+                            setLastUpdate(prev => ({ ...prev, observed: new Date() }));
+                        }
                         
                         // 予測データ読み込み
                         const predResponse = await fetch('./data/prediction/latest.json');
-                        const predData = await predResponse.json();
+                        if (predResponse.ok) {
+                            const predData = await predResponse.json();
+                            setPredictionData(predData);
+                            setLastUpdate(prev => ({ ...prev, prediction: new Date() }));
+                        }
                         
-                        setObservedData(obsData);
-                        setPredictionData(predData);
                         setLoading(false);
-                    } catch (error) {
-                        console.error('データ読み込みエラー:', error);
+                    } catch (err) {
+                        console.error('データ読み込みエラー:', err);
+                        setError('データの読み込みに失敗しました: ' + err.message);
                         setLoading(false);
                     }
                 };
                 
                 loadData();
                 
-                // 5分ごとにデータを再読み込み
+                // 5分ごとに再読み込み
                 const interval = setInterval(loadData, 5 * 60 * 1000);
                 return () => clearInterval(interval);
             }, []);
-            
+
+            const calculateTidalFlatPeriods = (data) => {
+                const periods = [];
+                let currentPeriod = null;
+
+                data.forEach((point) => {
+                    const pointDate = new Date(point.datetime);
+                    const hour = pointDate.getHours();
+                    const isDaytime = hour >= minTime && hour < maxTime;
+                    
+                    if (point.tide <= threshold) {
+                        if (!currentPeriod) {
+                            currentPeriod = {
+                                start: point.datetime,
+                                minTide: point.tide,
+                                minTideTime: point.datetime,
+                                daytimeHours: 0,
+                                hasDaytime: false,
+                                points: [point]
+                            };
+                        } else {
+                            currentPeriod.points.push(point);
+                            if (point.tide < currentPeriod.minTide) {
+                                currentPeriod.minTide = point.tide;
+                                currentPeriod.minTideTime = point.datetime;
+                            }
+                        }
+                        if (isDaytime) {
+                            currentPeriod.daytimeHours += (data[0].type === 'observed' ? 5/60 : 1);
+                            currentPeriod.hasDaytime = true;
+                        }
+                    } else {
+                        if (currentPeriod && currentPeriod.points.length > 0) {
+                            const startDate = new Date(currentPeriod.start);
+                            const endDate = new Date(currentPeriod.points[currentPeriod.points.length - 1].datetime);
+                            currentPeriod.end = currentPeriod.points[currentPeriod.points.length - 1].datetime;
+                            currentPeriod.duration = (endDate - startDate) / (1000 * 60 * 60);
+                            
+                            periods.push(currentPeriod);
+                            currentPeriod = null;
+                        }
+                    }
+                });
+
+                if (currentPeriod && currentPeriod.points.length > 0) {
+                    const startDate = new Date(currentPeriod.start);
+                    const endDate = new Date(currentPeriod.points[currentPeriod.points.length - 1].datetime);
+                    currentPeriod.end = currentPeriod.points[currentPeriod.points.length - 1].datetime;
+                    currentPeriod.duration = (endDate - startDate) / (1000 * 60 * 60);
+                    periods.push(currentPeriod);
+                }
+
+                return periods;
+            };
+
+            const tidalFlatPeriods = useMemo(() => {
+                const data = activeTab === 'observed' ? observedData : predictionData;
+                return calculateTidalFlatPeriods(data);
+            }, [observedData, predictionData, threshold, minTime, maxTime, activeTab]);
+
+            const stats = useMemo(() => {
+                const daytimePeriods = tidalFlatPeriods.filter(p => p.hasDaytime);
+                const totalDaytimeHours = daytimePeriods.reduce((sum, p) => sum + p.daytimeHours, 0);
+                
+                return {
+                    totalPeriods: tidalFlatPeriods.length,
+                    daytimePeriods: daytimePeriods.length,
+                    totalDaytimeHours: totalDaytimeHours,
+                    bestPeriod: tidalFlatPeriods.reduce((best, p) => 
+                        !best || p.minTide < best.minTide ? p : best, null)
+                };
+            }, [tidalFlatPeriods]);
+
+            const formatTime = (datetime) => {
+                const date = new Date(datetime);
+                return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+            };
+
+            const formatDuration = (hours) => {
+                const h = Math.floor(hours);
+                const m = Math.round((hours - h) * 60);
+                if (h === 0) return `${m}分`;
+                if (m === 0) return `${h}時間`;
+                return `${h}時間${m}分`;
+            };
+
+            const formatUpdateTime = (date) => {
+                if (!date) return '---';
+                const now = new Date();
+                const diff = Math.floor((now - date) / 60000);
+                if (diff < 1) return 'たった今';
+                if (diff < 60) return `${diff}分前`;
+                const hours = Math.floor(diff / 60);
+                if (hours < 24) return `${hours}時間前`;
+                return date.toLocaleString('ja-JP');
+            };
+
             if (loading) {
-                return <div className="flex items-center justify-center min-h-screen">
-                    <div className="text-center">
-                        <div className="text-2xl mb-4">🌊</div>
-                        <p>データ読み込み中...</p>
+                return (
+                    <div className="w-full min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center">
+                        <div className="text-center">
+                            <RefreshCw />
+                            <p className="text-gray-600 mt-4">データ読み込み中...</p>
+                        </div>
                     </div>
-                </div>;
+                );
             }
-            
+
+            if (error) {
+                return (
+                    <div className="w-full min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center">
+                        <div className="text-center bg-white p-8 rounded-lg shadow-lg max-w-md">
+                            <p className="text-red-600 font-semibold mb-4">❌ エラー</p>
+                            <p className="text-gray-600">{error}</p>
+                            <p className="text-sm text-gray-500 mt-4">
+                                データファイルが生成されるまでお待ちください。<br/>
+                                GitHub Actionsでデータ取得中の可能性があります。
+                            </p>
+                        </div>
+                    </div>
+                );
+            }
+
+            const chartData = activeTab === 'observed' 
+                ? observedData.slice(-288)
+                : predictionData.slice(0, chartDays * 24);
+
             return (
-                <div className="p-4">
-                    <h1 className="text-3xl font-bold mb-4">🏖️ 納屋港 干潟出現予測システム</h1>
-                    {/* ここに UI を追加 */}
+                <div className="w-full min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 p-4 md:p-6">
+                    <div className="max-w-7xl mx-auto space-y-6">
+                        <div className="bg-white rounded-lg shadow-lg p-6">
+                            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
+                                <span className="text-4xl">🏖️</span>
+                                納屋港 干潟出現予測システム
+                            </h1>
+                            <p className="text-gray-600 text-sm md:text-base mb-4">
+                                海上保安庁データ自動取得・リアルタイム更新対応
+                            </p>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                                <div className="flex items-center gap-2 text-gray-600">
+                                    <Clock />
+                                    <span>実測データ更新:</span>
+                                    <span className="font-semibold text-blue-600">
+                                        {formatUpdateTime(lastUpdate.observed)}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-2 text-gray-600">
+                                    <TrendingUp />
+                                    <span>予測データ更新:</span>
+                                    <span className="font-semibold text-green-600">
+                                        {formatUpdateTime(lastUpdate.prediction)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-lg shadow-lg p-4">
+                            <div className="flex gap-2 flex-wrap">
+                                <button
+                                    onClick={() => setActiveTab('prediction')}
+                                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                                        activeTab === 'prediction'
+                                            ? 'bg-blue-600 text-white'
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    }`}
+                                >
+                                    📊 7日間予測
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('observed')}
+                                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                                        activeTab === 'observed'
+                                            ? 'bg-green-600 text-white'
+                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                    }`}
+                                >
+                                    📈 実測値（24時間）
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                            <div className="bg-white rounded-lg shadow p-4">
+                                <div className="text-xs md:text-sm text-gray-600 mb-1">干潟出現回数</div>
+                                <div className="text-xl md:text-2xl font-bold text-blue-600">{stats.totalPeriods}回</div>
+                            </div>
+                            <div className="bg-white rounded-lg shadow p-4">
+                                <div className="text-xs md:text-sm text-gray-600 mb-1">昼間作業可能</div>
+                                <div className="text-xl md:text-2xl font-bold text-green-600">{stats.daytimePeriods}回</div>
+                            </div>
+                            <div className="bg-white rounded-lg shadow p-4">
+                                <div className="text-xs md:text-sm text-gray-600 mb-1">昼間作業時間</div>
+                                <div className="text-xl md:text-2xl font-bold text-orange-600">
+                                    {formatDuration(stats.totalDaytimeHours)}
+                                </div>
+                            </div>
+                            <div className="bg-white rounded-lg shadow p-4">
+                                <div className="text-xs md:text-sm text-gray-600 mb-1">最低潮位</div>
+                                <div className="text-xl md:text-2xl font-bold text-purple-600">
+                                    {stats.bestPeriod ? `${stats.bestPeriod.minTide}cm` : '-'}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-lg shadow-lg p-6">
+                            <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-4">
+                                {activeTab === 'prediction' ? '7日間潮位予測' : '実測潮位（直近24時間）'}
+                            </h2>
+                            
+                            {chartData.length > 0 ? (
+                                <ResponsiveContainer width="100%" height={400}>
+                                    <AreaChart data={chartData}>
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis 
+                                            dataKey="datetime"
+                                            tickFormatter={(value) => {
+                                                const date = new Date(value);
+                                                const hour = date.getHours();
+                                                if (activeTab === 'observed') {
+                                                    return hour % 3 === 0 ? `${hour}:00` : '';
+                                                }
+                                                return hour === 0 ? `${date.getMonth()+1}/${date.getDate()}` : hour % 6 === 0 ? `${hour}:00` : '';
+                                            }}
+                                        />
+                                        <YAxis label={{ value: '潮位 (cm)', angle: -90, position: 'insideLeft' }} />
+                                        <Tooltip 
+                                            labelFormatter={(value) => new Date(value).toLocaleString('ja-JP')}
+                                            formatter={(value) => [value + 'cm', '潮位']}
+                                        />
+                                        <ReferenceLine y={threshold} stroke="#ef4444" strokeDasharray="3 3" label="閾値" />
+                                        <Area 
+                                            type="monotone" 
+                                            dataKey="tide" 
+                                            stroke={activeTab === 'observed' ? '#10b981' : '#3b82f6'}
+                                            fill={activeTab === 'observed' ? '#86efac' : '#93c5fd'}
+                                            fillOpacity={0.6}
+                                        />
+                                    </AreaChart>
+                                </ResponsiveContainer>
+                            ) : (
+                                <p className="text-center text-gray-500 py-8">データがありません</p>
+                            )}
+                        </div>
+
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div className="flex items-start gap-3">
+                                <Info />
+                                <div className="text-sm text-gray-700">
+                                    <p className="font-semibold mb-2">🤖 自動更新システム</p>
+                                    <ul className="space-y-1 list-disc list-inside">
+                                        <li>実測データ: 30分ごとに海上保安庁から自動取得</li>
+                                        <li>予測データ: 毎日0時に7日分の予測を更新</li>
+                                        <li>データ保存: JSON形式でGitHubに自動コミット</li>
+                                        <li>データ件数: 実測 {observedData.length}件、予測 {predictionData.length}件</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             );
         };
