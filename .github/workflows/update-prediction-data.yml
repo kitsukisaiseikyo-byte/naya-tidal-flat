@@ -1,0 +1,38 @@
+# .github/workflows/update-prediction-data.yml
+# 毎日0時に予測データを取得
+
+name: Update Tide Prediction Data
+
+on:
+  schedule:
+    # 毎日0時15分に実行（JST 9:15）
+    - cron: '15 0 * * *'
+  workflow_dispatch: # 手動実行も可能
+
+jobs:
+  fetch-prediction-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        pip install pandas requests beautifulsoup4
+        
+    - name: Fetch 7-day tide prediction
+      run: |
+        python scripts/fetch_tide_prediction.py
+        
+    - name: Commit and push if changed
+      run: |
+        git config --global user.name 'GitHub Action'
+        git config --global user.email 'action@github.com'
+        git add data/prediction/
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Update tide prediction data $(date +'%Y-%m-%d')" && git push)
