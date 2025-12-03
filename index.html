@@ -7,32 +7,61 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/recharts@2.10.3/dist/Recharts.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: linear-gradient(135deg, #e0f2fe 0%, #cffafe 100%); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+        .card { background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 1.5rem; margin-bottom: 1.5rem; }
+        .header { font-size: 2rem; font-weight: bold; color: #1f2937; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem; }
+        .subtitle { color: #6b7280; margin-bottom: 1rem; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+        .stat-card { background: white; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); padding: 1rem; }
+        .stat-label { font-size: 0.875rem; color: #6b7280; margin-bottom: 0.25rem; }
+        .stat-value { font-size: 1.5rem; font-weight: bold; }
+        .tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .tab { padding: 0.75rem 1.5rem; border-radius: 8px; border: none; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+        .tab.active { background: #2563eb; color: white; }
+        .tab.inactive { background: #f3f4f6; color: #374151; }
+        .tab.inactive:hover { background: #e5e7eb; }
+        .update-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; font-size: 0.875rem; color: #6b7280; }
+        .update-item { display: flex; align-items: center; gap: 0.5rem; }
+        .canvas-container { background: white; padding: 1rem; border-radius: 8px; overflow-x: auto; }
+        canvas { max-width: 100%; height: auto; }
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        th { background: #f9fafb; font-weight: 600; color: #374151; }
+        tr:hover { background: #f9fafb; }
+        .period-card { border-left: 4px solid #d1d5db; padding: 1rem; margin-bottom: 1rem; border-radius: 4px; }
+        .period-card.daytime { background: #fffbeb; border-left-color: #f59e0b; }
+        .period-card.nighttime { background: #f3f4f6; border-left-color: #9ca3af; }
+        .period-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
+        .period-time { font-weight: 600; color: #1f2937; }
+        .badge { padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+        .badge-green { background: #d1fae5; color: #065f46; }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .badge-gray { background: #f3f4f6; color: #374151; }
+        .info-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 1rem; }
+        .info-box ul { margin-left: 1.5rem; margin-top: 0.5rem; }
+        .info-box li { margin-bottom: 0.25rem; }
+        .loading { text-align: center; padding: 3rem; }
+        .error { background: #fee; border: 1px solid #fcc; color: #c00; padding: 1rem; border-radius: 8px; }
+        .settings-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .setting-item label { display: block; font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.5rem; }
+        .setting-item input[type="range"] { width: 100%; }
+    </style>
 </head>
 <body>
     <div id="root"></div>
     
     <script type="text/babel">
         const { useState, useEffect, useMemo } = React;
-        const { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } = Recharts;
-        
-        // Lucide icons
-        const Calendar = () => <span>📅</span>;
-        const Sun = () => <span>☀️</span>;
-        const Moon = () => <span>🌙</span>;
-        const Info = () => <span>ℹ️</span>;
-        const Settings = () => <span>⚙️</span>;
-        const RefreshCw = () => <span>🔄</span>;
-        const Clock = () => <span>🕐</span>;
-        const TrendingUp = () => <span>📈</span>;
 
         const TidalFlatSystem = () => {
             const [threshold, setThreshold] = useState(120);
             const [minTime, setMinTime] = useState(6);
             const [maxTime, setMaxTime] = useState(18);
             const [showSettings, setShowSettings] = useState(false);
-            const [chartDays, setChartDays] = useState(7);
             const [activeTab, setActiveTab] = useState('prediction');
             
             const [observedData, setObservedData] = useState([]);
@@ -49,7 +78,6 @@
                     try {
                         setError(null);
                         
-                        // 実測データ読み込み
                         const obsResponse = await fetch('./data/observed/latest.json');
                         if (obsResponse.ok) {
                             const obsData = await obsResponse.json();
@@ -57,7 +85,6 @@
                             setLastUpdate(prev => ({ ...prev, observed: new Date() }));
                         }
                         
-                        // 予測データ読み込み
                         const predResponse = await fetch('./data/prediction/latest.json');
                         if (predResponse.ok) {
                             const predData = await predResponse.json();
@@ -68,14 +95,12 @@
                         setLoading(false);
                     } catch (err) {
                         console.error('データ読み込みエラー:', err);
-                        setError('データの読み込みに失敗しました: ' + err.message);
+                        setError('データの読み込みに失敗しました。GitHub Actionsでデータ取得中の可能性があります。');
                         setLoading(false);
                     }
                 };
                 
                 loadData();
-                
-                // 5分ごとに再読み込み
                 const interval = setInterval(loadData, 5 * 60 * 1000);
                 return () => clearInterval(interval);
             }, []);
@@ -94,7 +119,6 @@
                             currentPeriod = {
                                 start: point.datetime,
                                 minTide: point.tide,
-                                minTideTime: point.datetime,
                                 daytimeHours: 0,
                                 hasDaytime: false,
                                 points: [point]
@@ -103,7 +127,6 @@
                             currentPeriod.points.push(point);
                             if (point.tide < currentPeriod.minTide) {
                                 currentPeriod.minTide = point.tide;
-                                currentPeriod.minTideTime = point.datetime;
                             }
                         }
                         if (isDaytime) {
@@ -116,7 +139,6 @@
                             const endDate = new Date(currentPeriod.points[currentPeriod.points.length - 1].datetime);
                             currentPeriod.end = currentPeriod.points[currentPeriod.points.length - 1].datetime;
                             currentPeriod.duration = (endDate - startDate) / (1000 * 60 * 60);
-                            
                             periods.push(currentPeriod);
                             currentPeriod = null;
                         }
@@ -157,6 +179,11 @@
                 return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
             };
 
+            const formatDate = (datetime) => {
+                const date = new Date(datetime);
+                return `${date.getMonth() + 1}/${date.getDate()}`;
+            };
+
             const formatDuration = (hours) => {
                 const h = Math.floor(hours);
                 const m = Math.round((hours - h) * 60);
@@ -176,12 +203,22 @@
                 return date.toLocaleString('ja-JP');
             };
 
+            const groupPeriodsByDate = () => {
+                const grouped = {};
+                tidalFlatPeriods.forEach(period => {
+                    const date = formatDate(period.start);
+                    if (!grouped[date]) grouped[date] = [];
+                    grouped[date].push(period);
+                });
+                return grouped;
+            };
+
             if (loading) {
                 return (
-                    <div className="w-full min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center">
-                        <div className="text-center">
-                            <RefreshCw />
-                            <p className="text-gray-600 mt-4">データ読み込み中...</p>
+                    <div className="container">
+                        <div className="card loading">
+                            <div style={{fontSize: '3rem'}}>🔄</div>
+                            <p>データ読み込み中...</p>
                         </div>
                     </div>
                 );
@@ -189,155 +226,188 @@
 
             if (error) {
                 return (
-                    <div className="w-full min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 flex items-center justify-center">
-                        <div className="text-center bg-white p-8 rounded-lg shadow-lg max-w-md">
-                            <p className="text-red-600 font-semibold mb-4">❌ エラー</p>
-                            <p className="text-gray-600">{error}</p>
-                            <p className="text-sm text-gray-500 mt-4">
-                                データファイルが生成されるまでお待ちください。<br/>
-                                GitHub Actionsでデータ取得中の可能性があります。
-                            </p>
+                    <div className="container">
+                        <div className="card">
+                            <div className="error">
+                                <strong>❌ エラー</strong>
+                                <p>{error}</p>
+                                <p style={{marginTop: '1rem', fontSize: '0.875rem'}}>
+                                    GitHub Actionsタブで「Update Observed Tide Data」と「Update Tide Prediction Data」を手動実行してください。
+                                </p>
+                            </div>
                         </div>
                     </div>
                 );
             }
 
-            const chartData = activeTab === 'observed' 
-                ? observedData.slice(-288)
-                : predictionData.slice(0, chartDays * 24);
+            const periodsByDate = groupPeriodsByDate();
 
             return (
-                <div className="w-full min-h-screen bg-gradient-to-br from-blue-50 to-cyan-50 p-4 md:p-6">
-                    <div className="max-w-7xl mx-auto space-y-6">
-                        <div className="bg-white rounded-lg shadow-lg p-6">
-                            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2 flex items-center gap-3">
-                                <span className="text-4xl">🏖️</span>
-                                納屋港 干潟出現予測システム
-                            </h1>
-                            <p className="text-gray-600 text-sm md:text-base mb-4">
-                                海上保安庁データ自動取得・リアルタイム更新対応
-                            </p>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                                <div className="flex items-center gap-2 text-gray-600">
-                                    <Clock />
-                                    <span>実測データ更新:</span>
-                                    <span className="font-semibold text-blue-600">
-                                        {formatUpdateTime(lastUpdate.observed)}
-                                    </span>
-                                </div>
-                                <div className="flex items-center gap-2 text-gray-600">
-                                    <TrendingUp />
-                                    <span>予測データ更新:</span>
-                                    <span className="font-semibold text-green-600">
-                                        {formatUpdateTime(lastUpdate.prediction)}
-                                    </span>
-                                </div>
+                <div className="container">
+                    <div className="card">
+                        <h1 className="header">
+                            <span style={{fontSize: '2.5rem'}}>🏖️</span>
+                            納屋港 干潟出現予測システム
+                        </h1>
+                        <p className="subtitle">海上保安庁データ自動取得・リアルタイム更新対応</p>
+                        
+                        <div className="update-info">
+                            <div className="update-item">
+                                <span>🕐</span>
+                                <span>実測データ更新: <strong style={{color: '#2563eb'}}>{formatUpdateTime(lastUpdate.observed)}</strong></span>
+                            </div>
+                            <div className="update-item">
+                                <span>📈</span>
+                                <span>予測データ更新: <strong style={{color: '#059669'}}>{formatUpdateTime(lastUpdate.prediction)}</strong></span>
                             </div>
                         </div>
+                    </div>
 
-                        <div className="bg-white rounded-lg shadow-lg p-4">
-                            <div className="flex gap-2 flex-wrap">
-                                <button
-                                    onClick={() => setActiveTab('prediction')}
-                                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                                        activeTab === 'prediction'
-                                            ? 'bg-blue-600 text-white'
-                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                    }`}
-                                >
-                                    📊 7日間予測
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('observed')}
-                                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                                        activeTab === 'observed'
-                                            ? 'bg-green-600 text-white'
-                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                    }`}
-                                >
-                                    📈 実測値（24時間）
-                                </button>
+                    <div className="card">
+                        <div className="tabs">
+                            <button 
+                                className={`tab ${activeTab === 'prediction' ? 'active' : 'inactive'}`}
+                                onClick={() => setActiveTab('prediction')}
+                            >
+                                📊 7日間予測
+                            </button>
+                            <button 
+                                className={`tab ${activeTab === 'observed' ? 'active' : 'inactive'}`}
+                                onClick={() => setActiveTab('observed')}
+                            >
+                                📈 実測値（24時間）
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="stats-grid">
+                        <div className="stat-card">
+                            <div className="stat-label">干潟出現回数</div>
+                            <div className="stat-value" style={{color: '#2563eb'}}>{stats.totalPeriods}回</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-label">昼間作業可能</div>
+                            <div className="stat-value" style={{color: '#059669'}}>{stats.daytimePeriods}回</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-label">昼間作業時間</div>
+                            <div className="stat-value" style={{color: '#ea580c'}}>{formatDuration(stats.totalDaytimeHours)}</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-label">最低潮位</div>
+                            <div className="stat-value" style={{color: '#9333ea'}}>
+                                {stats.bestPeriod ? `${stats.bestPeriod.minTide}cm` : '-'}
                             </div>
                         </div>
+                    </div>
 
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                            <div className="bg-white rounded-lg shadow p-4">
-                                <div className="text-xs md:text-sm text-gray-600 mb-1">干潟出現回数</div>
-                                <div className="text-xl md:text-2xl font-bold text-blue-600">{stats.totalPeriods}回</div>
-                            </div>
-                            <div className="bg-white rounded-lg shadow p-4">
-                                <div className="text-xs md:text-sm text-gray-600 mb-1">昼間作業可能</div>
-                                <div className="text-xl md:text-2xl font-bold text-green-600">{stats.daytimePeriods}回</div>
-                            </div>
-                            <div className="bg-white rounded-lg shadow p-4">
-                                <div className="text-xs md:text-sm text-gray-600 mb-1">昼間作業時間</div>
-                                <div className="text-xl md:text-2xl font-bold text-orange-600">
-                                    {formatDuration(stats.totalDaytimeHours)}
+                    <div className="card">
+                        <button 
+                            onClick={() => setShowSettings(!showSettings)}
+                            style={{background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '1rem'}}
+                        >
+                            ⚙️ 表示設定 {showSettings ? '▼' : '▶'}
+                        </button>
+                        
+                        {showSettings && (
+                            <div className="settings-panel">
+                                <div className="setting-item">
+                                    <label>干潟判定閾値: {threshold}cm</label>
+                                    <input
+                                        type="range"
+                                        min="50"
+                                        max="150"
+                                        value={threshold}
+                                        onChange={(e) => setThreshold(parseInt(e.target.value))}
+                                    />
+                                </div>
+                                <div className="setting-item">
+                                    <label>作業開始時刻: {minTime}:00</label>
+                                    <input
+                                        type="range"
+                                        min="0"
+                                        max="23"
+                                        value={minTime}
+                                        onChange={(e) => setMinTime(parseInt(e.target.value))}
+                                    />
+                                </div>
+                                <div className="setting-item">
+                                    <label>作業終了時刻: {maxTime}:00</label>
+                                    <input
+                                        type="range"
+                                        min="1"
+                                        max="24"
+                                        value={maxTime}
+                                        onChange={(e) => setMaxTime(parseInt(e.target.value))}
+                                    />
                                 </div>
                             </div>
-                            <div className="bg-white rounded-lg shadow p-4">
-                                <div className="text-xs md:text-sm text-gray-600 mb-1">最低潮位</div>
-                                <div className="text-xl md:text-2xl font-bold text-purple-600">
-                                    {stats.bestPeriod ? `${stats.bestPeriod.minTide}cm` : '-'}
-                                </div>
-                            </div>
-                        </div>
+                        )}
+                    </div>
 
-                        <div className="bg-white rounded-lg shadow-lg p-6">
-                            <h2 className="text-lg md:text-xl font-bold text-gray-800 mb-4">
-                                {activeTab === 'prediction' ? '7日間潮位予測' : '実測潮位（直近24時間）'}
-                            </h2>
-                            
-                            {chartData.length > 0 ? (
-                                <ResponsiveContainer width="100%" height={400}>
-                                    <AreaChart data={chartData}>
-                                        <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis 
-                                            dataKey="datetime"
-                                            tickFormatter={(value) => {
-                                                const date = new Date(value);
-                                                const hour = date.getHours();
-                                                if (activeTab === 'observed') {
-                                                    return hour % 3 === 0 ? `${hour}:00` : '';
-                                                }
-                                                return hour === 0 ? `${date.getMonth()+1}/${date.getDate()}` : hour % 6 === 0 ? `${hour}:00` : '';
-                                            }}
-                                        />
-                                        <YAxis label={{ value: '潮位 (cm)', angle: -90, position: 'insideLeft' }} />
-                                        <Tooltip 
-                                            labelFormatter={(value) => new Date(value).toLocaleString('ja-JP')}
-                                            formatter={(value) => [value + 'cm', '潮位']}
-                                        />
-                                        <ReferenceLine y={threshold} stroke="#ef4444" strokeDasharray="3 3" label="閾値" />
-                                        <Area 
-                                            type="monotone" 
-                                            dataKey="tide" 
-                                            stroke={activeTab === 'observed' ? '#10b981' : '#3b82f6'}
-                                            fill={activeTab === 'observed' ? '#86efac' : '#93c5fd'}
-                                            fillOpacity={0.6}
-                                        />
-                                    </AreaChart>
-                                </ResponsiveContainer>
-                            ) : (
-                                <p className="text-center text-gray-500 py-8">データがありません</p>
-                            )}
-                        </div>
-
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                            <div className="flex items-start gap-3">
-                                <Info />
-                                <div className="text-sm text-gray-700">
-                                    <p className="font-semibold mb-2">🤖 自動更新システム</p>
-                                    <ul className="space-y-1 list-disc list-inside">
-                                        <li>実測データ: 30分ごとに海上保安庁から自動取得</li>
-                                        <li>予測データ: 毎日0時に7日分の予測を更新</li>
-                                        <li>データ保存: JSON形式でGitHubに自動コミット</li>
-                                        <li>データ件数: 実測 {observedData.length}件、予測 {predictionData.length}件</li>
-                                    </ul>
-                                </div>
+                    <div className="card">
+                        <h2 style={{fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1rem'}}>
+                            📅 干潟出現スケジュール
+                        </h2>
+                        
+                        {Object.entries(periodsByDate).slice(0, 14).map(([date, periods]) => (
+                            <div key={date} style={{marginBottom: '1.5rem'}}>
+                                <h3 style={{fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '0.75rem'}}>
+                                    {date}
+                                </h3>
+                                
+                                {periods.map((period, idx) => (
+                                    <div 
+                                        key={idx}
+                                        className={`period-card ${period.hasDaytime ? 'daytime' : 'nighttime'}`}
+                                    >
+                                        <div className="period-header">
+                                            <div>
+                                                <div className="period-time">
+                                                    {period.hasDaytime ? '☀️' : '🌙'} {formatTime(period.start)} 〜 {formatTime(period.end)}
+                                                    <span style={{marginLeft: '0.5rem', fontSize: '0.875rem', color: '#6b7280'}}>
+                                                        ({formatDuration(period.duration)})
+                                                    </span>
+                                                </div>
+                                                <div style={{fontSize: '0.875rem', marginTop: '0.5rem'}}>
+                                                    <span style={{color: '#6b7280'}}>最低潮位:</span>
+                                                    <strong style={{marginLeft: '0.5rem', color: '#2563eb'}}>{period.minTide}cm</strong>
+                                                    {period.hasDaytime && (
+                                                        <>
+                                                            <span style={{marginLeft: '1rem', color: '#6b7280'}}>昼間作業:</span>
+                                                            <strong style={{marginLeft: '0.5rem', color: '#ea580c'}}>
+                                                                {formatDuration(period.daytimeHours)}
+                                                            </strong>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                {period.minTide < 50 && (
+                                                    <span className="badge badge-green">広範囲</span>
+                                                )}
+                                                {period.minTide >= 50 && period.minTide < 90 && (
+                                                    <span className="badge badge-blue">中程度</span>
+                                                )}
+                                                {period.minTide >= 90 && (
+                                                    <span className="badge badge-gray">部分的</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        </div>
+                        ))}
+                    </div>
+
+                    <div className="info-box">
+                        <strong>ℹ️ 自動更新システム</strong>
+                        <ul>
+                            <li>実測データ: 30分ごとに海上保安庁から自動取得</li>
+                            <li>予測データ: 毎日0時に7日分の予測を更新</li>
+                            <li>データ保存: JSON形式でGitHubに自動コミット</li>
+                            <li>データ件数: 実測 {observedData.length}件、予測 {predictionData.length}件</li>
+                        </ul>
                     </div>
                 </div>
             );
