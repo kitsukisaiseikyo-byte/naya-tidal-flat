@@ -1,0 +1,77 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>納屋港 干潟出現予測システム</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/recharts@2.5.0/dist/Recharts.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } = Recharts;
+        
+        // ここに React コンポーネントを配置
+        // （Artifact の TidalFlatSystem コンポーネントをコピー）
+        
+        const TidalFlatSystem = () => {
+            const [threshold, setThreshold] = React.useState(120);
+            const [observedData, setObservedData] = React.useState([]);
+            const [predictionData, setPredictionData] = React.useState([]);
+            const [loading, setLoading] = React.useState(true);
+            
+            React.useEffect(() => {
+                const loadData = async () => {
+                    try {
+                        // 実測データ読み込み
+                        const obsResponse = await fetch('./data/observed/latest.json');
+                        const obsData = await obsResponse.json();
+                        
+                        // 予測データ読み込み
+                        const predResponse = await fetch('./data/prediction/latest.json');
+                        const predData = await predResponse.json();
+                        
+                        setObservedData(obsData);
+                        setPredictionData(predData);
+                        setLoading(false);
+                    } catch (error) {
+                        console.error('データ読み込みエラー:', error);
+                        setLoading(false);
+                    }
+                };
+                
+                loadData();
+                
+                // 5分ごとにデータを再読み込み
+                const interval = setInterval(loadData, 5 * 60 * 1000);
+                return () => clearInterval(interval);
+            }, []);
+            
+            if (loading) {
+                return <div className="flex items-center justify-center min-h-screen">
+                    <div className="text-center">
+                        <div className="text-2xl mb-4">🌊</div>
+                        <p>データ読み込み中...</p>
+                    </div>
+                </div>;
+            }
+            
+            return (
+                <div className="p-4">
+                    <h1 className="text-3xl font-bold mb-4">🏖️ 納屋港 干潟出現予測システム</h1>
+                    {/* ここに UI を追加 */}
+                </div>
+            );
+        };
+        
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<TidalFlatSystem />);
+    </script>
+</body>
+</html>
