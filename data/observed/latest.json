@@ -1,55 +1,5 @@
 [
   {
-    "datetime": "2025-12-03T02:45:00",
-    "tide": 91,
-    "type": "observed"
-  },
-  {
-    "datetime": "2025-12-03T02:50:00",
-    "tide": 94,
-    "type": "observed"
-  },
-  {
-    "datetime": "2025-12-03T02:55:00",
-    "tide": 97,
-    "type": "observed"
-  },
-  {
-    "datetime": "2025-12-03T03:00:00",
-    "tide": 101,
-    "type": "observed"
-  },
-  {
-    "datetime": "2025-12-03T03:05:00",
-    "tide": 105,
-    "type": "observed"
-  },
-  {
-    "datetime": "2025-12-03T03:10:00",
-    "tide": 109,
-    "type": "observed"
-  },
-  {
-    "datetime": "2025-12-03T03:15:00",
-    "tide": 113,
-    "type": "observed"
-  },
-  {
-    "datetime": "2025-12-03T03:20:00",
-    "tide": 116,
-    "type": "observed"
-  },
-  {
-    "datetime": "2025-12-03T03:25:00",
-    "tide": 121,
-    "type": "observed"
-  },
-  {
-    "datetime": "2025-12-03T03:30:00",
-    "tide": 124,
-    "type": "observed"
-  },
-  {
     "datetime": "2025-12-03T03:35:00",
     "tide": 129,
     "type": "observed"
@@ -1437,6 +1387,56 @@
   {
     "datetime": "2025-12-04T02:45:00",
     "tide": 39,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-04T02:50:00",
+    "tide": 42,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-04T02:55:00",
+    "tide": 45,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-04T03:00:00",
+    "tide": 46,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-04T03:05:00",
+    "tide": 49,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-04T03:10:00",
+    "tide": 52,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-04T03:15:00",
+    "tide": 56,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-04T03:20:00",
+    "tide": 59,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-04T03:25:00",
+    "tide": 59,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-04T03:30:00",
+    "tide": 64,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-04T03:35:00",
+    "tide": 65,
     "type": "observed"
   }
 ]
