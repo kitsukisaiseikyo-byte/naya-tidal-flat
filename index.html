@@ -35,10 +35,16 @@
             -webkit-overflow-scrolling: touch;
             margin-bottom: 1rem;
         }
+        .chart-wrapper.no-scroll {
+            overflow-x: hidden;
+        }
         .chart-container { 
-            min-width: 600px; /* スマホでは横スクロール可能に */
+            min-width: 600px; /* 予測グラフ（7日間）はスマホで横スクロール */
             height: 300px;
             position: relative;
+        }
+        .chart-container.full-width {
+            min-width: 100%; /* 実測グラフ（24時間）は画面幅に収める */
         }
         
         /* タブレット以上 */
@@ -443,8 +449,8 @@
                         <h2 style={{fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '1rem'}}>
                             {activeTab === 'prediction' ? '📊 7日間潮位予測' : '📈 実測潮位（24時間）'}
                         </h2>
-                        <div className="chart-wrapper">
-                            <div className="chart-container">
+                        <div className={`chart-wrapper ${activeTab === 'observed' ? 'no-scroll' : ''}`}>
+                            <div className={`chart-container ${activeTab === 'observed' ? 'full-width' : ''}`}>
                                 <TideChart 
                                     data={activeTab === 'observed' ? observedData.slice(-288) : predictionData}
                                     threshold={threshold}
@@ -452,7 +458,9 @@
                                 />
                             </div>
                         </div>
-                        <div className="scroll-hint">← スワイプして全体を表示 →</div>
+                        {activeTab === 'prediction' && (
+                            <div className="scroll-hint">← スワイプして全体を表示 →</div>
+                        )}
                     </div>
 
                     <div className="card">
