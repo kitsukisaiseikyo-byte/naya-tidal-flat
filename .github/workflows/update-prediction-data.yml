@@ -1,67 +1,62 @@
 # .github/workflows/update-prediction-data.yml
-# 毎日0時に予測データを取得
-
 name: Update Tide Prediction Data
 
 on:
-  schedule:
-    # 毎日0時15分に実行（JST 9:15）
-    - cron: '15 0 * * *'
-  workflow_dispatch: # 手動実行も可能
+  repository_dispatch:
+    types: [trigger-prediction] # ★合言葉を「trigger-prediction」にする
+  workflow_dispatch:
 
 jobs:
   fetch-prediction-data:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-      
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-        
-    - name: Install dependencies
-      run: |
-        pip install pandas requests beautifulsoup4
-        
-    - name: Fetch 7-day tide prediction
-      run: |
-        python scripts/fetch_tide_prediction.py
-        
-    - name: Commit and push if changed
-      run: |
-        git config --global user.name 'GitHub Action'
-        git config --global user.email 'action@github.com'
-        git add data/prediction/
-        
-        # 変更があるかチェック
-        if git diff --staged --quiet; then
-          echo "No changes to commit"
-          exit 0
-        fi
-        
-        # コミット
-        git commit -m "Update tide prediction data $(date +'%Y-%m-%d')"
-        
-        # プッシュ（競合時は自動的にpull & retry）
-        max_retries=5
-        retry_count=0
-        
-        while [ $retry_count -lt $max_retries ]; do
-          if git push; then
-            echo "Push successful"
+      - name: Checkout repository
+        uses: actions/checkout@v4 # v3→v4推奨
+        with:
+          # ★重要: 作成したPATを使うことで、Push時に他のAction(Pages)がトリガーされます
+          token: ${{ secrets.naya-tidal-flat-token }} 
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install pandas requests beautifulsoup4
+
+      - name: Fetch 7-day tide prediction
+        run: |
+          python scripts/fetch_tide_prediction.py
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          
+          # 変更があるかチェック
+          git add data/prediction/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
             exit 0
-          else
-            echo "Push failed, pulling and retrying... (attempt $((retry_count + 1))/$max_retries)"
-            git pull --rebase origin main
-            retry_count=$((retry_count + 1))
-            sleep 5
           fi
-        done
-        
-        echo "Failed to push after $max_retries attempts"
-        exit 1
+          
+          # コミット
+          git commit -m "Update tide prediction data $(date +'%Y-%m-%d')"
+          
+          # プッシュ（競合時は自動的にpull & retry）
+          max_retries=5
+          retry_count=0
+          while [ $retry_count -lt $max_retries ]; do
+            if git push; then
+              echo "Push successful"
+              exit 0
+            else
+              echo "Push failed, pulling and retrying... (attempt $((retry_count + 1))/$max_retries)"
+              git pull --rebase origin main
+              retry_count=$((retry_count + 1))
+              sleep 5
+            fi
+          done
+          echo "Failed to push after $max_retries attempts"
+          exit 1
