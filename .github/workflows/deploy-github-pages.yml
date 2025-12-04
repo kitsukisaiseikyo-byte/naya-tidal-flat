@@ -7,10 +7,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'data/**'
-      - 'index.html'
-      - '.github/workflows/deploy-github-pages.yml'
   workflow_dispatch:
 
 # 同時実行を防ぐ
