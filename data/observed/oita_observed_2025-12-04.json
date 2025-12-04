@@ -1468,5 +1468,10 @@
     "datetime": "2025-12-05T01:00:00",
     "tide": 1,
     "type": "observed"
+  },
+  {
+    "datetime": "2025-12-05T01:05:00",
+    "tide": 0,
+    "type": "observed"
   }
 ]
