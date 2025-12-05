@@ -115,7 +115,7 @@
     <script type="text/babel">
         const { useState, useEffect, useMemo, useRef } = React;
 
-        const TideChart = ({ data, threshold, title }) => {
+        const TideChart = ({ data, threshold, title, comparisonData, showCurrentTime }) => {
             const canvasRef = useRef(null);
             const chartRef = useRef(null);
 
@@ -141,14 +141,98 @@
                 });
                 const tideValues = data.map(d => d.tide);
 
-                // グラデーション作成
+                // グラデーション作成（メインデータ用）
                 const gradient = ctx.createLinearGradient(0, 0, 0, 400);
                 gradient.addColorStop(0, 'rgba(59, 130, 246, 0.5)');
                 gradient.addColorStop(1, 'rgba(59, 130, 246, 0.1)');
 
+                // グラデーション作成（比較データ用）
+                const comparisonGradient = ctx.createLinearGradient(0, 0, 0, 400);
+                comparisonGradient.addColorStop(0, 'rgba(251, 191, 36, 0.3)');
+                comparisonGradient.addColorStop(1, 'rgba(251, 191, 36, 0.05)');
+
+                // データセットの準備
+                const datasets = [{
+                    label: title === '実測値' ? '実測潮位 (cm)' : '予測潮位 (cm)',
+                    data: tideValues,
+                    borderColor: data[0]?.type === 'observed' ? 'rgb(16, 185, 129)' : 'rgb(59, 130, 246)',
+                    backgroundColor: data[0]?.type === 'observed' ? 'rgba(16, 185, 129, 0.3)' : gradient,
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 5
+                }];
+
+                // 比較データがある場合は追加
+                if (comparisonData && comparisonData.length > 0) {
+                    const comparisonValues = comparisonData.map(d => d.tide);
+                    datasets.push({
+                        label: '予測潮位 (cm)',
+                        data: comparisonValues,
+                        borderColor: 'rgb(251, 191, 36)',
+                        backgroundColor: comparisonGradient,
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 5
+                    });
+                }
+
                 // annotationプラグインを登録
                 if (!Chart.registry.plugins.get('annotation')) {
                     Chart.register(window['chartjs-plugin-annotation'].default);
+                }
+
+                // アノテーション設定
+                const annotations = {
+                    threshold: {
+                        type: 'line',
+                        yMin: threshold,
+                        yMax: threshold,
+                        borderColor: 'rgb(239, 68, 68)',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        label: {
+                            content: `閾値 ${threshold}cm`,
+                            display: true,
+                            position: 'end'
+                        }
+                    }
+                };
+
+                // 現在時刻のマーカーを追加
+                if (showCurrentTime) {
+                    const now = new Date();
+                    const nowStr = now.toLocaleString('ja-JP', { 
+                        month: 'numeric', 
+                        day: 'numeric', 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+                    const currentIndex = labels.findIndex(label => {
+                        const labelDate = new Date(data[labels.indexOf(label)]?.datetime);
+                        return Math.abs(labelDate - now) < 5 * 60 * 1000; // 5分以内
+                    });
+
+                    if (currentIndex !== -1) {
+                        annotations.currentTime = {
+                            type: 'point',
+                            xValue: currentIndex,
+                            yValue: tideValues[currentIndex],
+                            backgroundColor: 'rgb(239, 68, 68)',
+                            borderColor: 'white',
+                            borderWidth: 2,
+                            radius: 8,
+                            label: {
+                                content: '現在',
+                                display: true,
+                                position: 'top'
+                            }
+                        };
+                    }
                 }
 
                 // チャート作成
@@ -156,17 +240,7 @@
                     type: 'line',
                     data: {
                         labels: labels,
-                        datasets: [{
-                            label: '潮位 (cm)',
-                            data: tideValues,
-                            borderColor: 'rgb(59, 130, 246)',
-                            backgroundColor: gradient,
-                            borderWidth: 2,
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 0,
-                            pointHoverRadius: 5
-                        }]
+                        datasets: datasets
                     },
                     options: {
                         responsive: true,
@@ -183,26 +257,12 @@
                             tooltip: {
                                 callbacks: {
                                     label: function(context) {
-                                        return '潮位: ' + context.parsed.y + ' cm';
+                                        return context.dataset.label + ': ' + context.parsed.y + ' cm';
                                     }
                                 }
                             },
                             annotation: {
-                                annotations: {
-                                    threshold: {
-                                        type: 'line',
-                                        yMin: threshold,
-                                        yMax: threshold,
-                                        borderColor: 'rgb(239, 68, 68)',
-                                        borderWidth: 2,
-                                        borderDash: [5, 5],
-                                        label: {
-                                            content: `閾値 ${threshold}cm`,
-                                            display: true,
-                                            position: 'end'
-                                        }
-                                    }
-                                }
+                                annotations: annotations
                             }
                         },
                         scales: {
@@ -230,7 +290,7 @@
                         chartRef.current.destroy();
                     }
                 };
-            }, [data, threshold]);
+            }, [data, threshold, comparisonData, showCurrentTime]);
 
             return (
                 <div style={{ position: 'relative', height: '100%', width: '100%' }}>
@@ -244,7 +304,7 @@
             const [minTime, setMinTime] = useState(6);
             const [maxTime, setMaxTime] = useState(18);
             const [showSettings, setShowSettings] = useState(false);
-            const [activeTab, setActiveTab] = useState('prediction');
+            const [activeTab, setActiveTab] = useState('prediction'); // デフォルトを7日間予測に
             
             const [observedData, setObservedData] = useState([]);
             const [predictionData, setPredictionData] = useState([]);
@@ -337,6 +397,26 @@
 
                 return periods;
             };
+
+            // 今日の予測データと実測データを取得（比較用）
+            const getTodayComparisonData = () => {
+                const today = new Date();
+                const todayStr = today.toISOString().split('T')[0];
+                
+                // 今日の予測データ（0時〜23時）
+                const todayPrediction = predictionData.filter(d => {
+                    return d.datetime.startsWith(todayStr);
+                });
+                
+                // 今日の実測データ
+                const todayObserved = observedData.filter(d => {
+                    return d.datetime.startsWith(todayStr);
+                });
+                
+                return { todayPrediction, todayObserved };
+            };
+
+            const { todayPrediction, todayObserved } = getTodayComparisonData();
 
             const tidalFlatPeriods = useMemo(() => {
                 const data = activeTab === 'observed' ? observedData : predictionData;
@@ -446,24 +526,6 @@
                     </div>
 
                     <div className="card">
-                        <h2 style={{fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '1rem'}}>
-                            {activeTab === 'prediction' ? '📊 7日間潮位予測' : '📈 実測潮位（24時間）'}
-                        </h2>
-                        <div className={`chart-wrapper ${activeTab === 'observed' ? 'no-scroll' : ''}`}>
-                            <div className={`chart-container ${activeTab === 'observed' ? 'full-width' : ''}`}>
-                                <TideChart 
-                                    data={activeTab === 'observed' ? observedData.slice(-288) : predictionData}
-                                    threshold={threshold}
-                                    title={activeTab === 'prediction' ? '7日間予測' : '実測値'}
-                                />
-                            </div>
-                        </div>
-                        {activeTab === 'prediction' && (
-                            <div className="scroll-hint">← スワイプして全体を表示 →</div>
-                        )}
-                    </div>
-
-                    <div className="card">
                         <div className="tabs">
                             <button 
                                 className={`tab ${activeTab === 'prediction' ? 'active' : 'inactive'}`}
@@ -477,7 +539,51 @@
                             >
                                 📈 実測値（24時間）
                             </button>
+                            <button 
+                                className={`tab ${activeTab === 'comparison' ? 'active' : 'inactive'}`}
+                                onClick={() => setActiveTab('comparison')}
+                            >
+                                🔄 予測vs実測
+                            </button>
                         </div>
+                    </div>
+
+                    <div className="card">
+                        <h2 style={{fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '1rem'}}>
+                            {activeTab === 'prediction' && '📊 7日間潮位予測'}
+                            {activeTab === 'observed' && '📈 実測潮位（24時間）'}
+                            {activeTab === 'comparison' && '🔄 今日の予測 vs 実測'}
+                        </h2>
+                        <div className={`chart-wrapper ${activeTab === 'observed' || activeTab === 'comparison' ? 'no-scroll' : ''}`}>
+                            <div className={`chart-container ${activeTab === 'observed' || activeTab === 'comparison' ? 'full-width' : ''}`}>
+                                {activeTab === 'comparison' ? (
+                                    <TideChart 
+                                        data={todayObserved.length > 0 ? todayObserved : todayPrediction}
+                                        comparisonData={todayObserved.length > 0 ? todayPrediction : null}
+                                        threshold={threshold}
+                                        title="比較"
+                                        showCurrentTime={true}
+                                    />
+                                ) : activeTab === 'observed' ? (
+                                    <TideChart 
+                                        data={observedData.slice(-288)}
+                                        threshold={threshold}
+                                        title="実測値"
+                                        showCurrentTime={false}
+                                    />
+                                ) : (
+                                    <TideChart 
+                                        data={predictionData}
+                                        threshold={threshold}
+                                        title="予測値"
+                                        showCurrentTime={true}
+                                    />
+                                )}
+                            </div>
+                        </div>
+                        {activeTab === 'prediction' && (
+                            <div className="scroll-hint">← スワイプして全体を表示 →</div>
+                        )}
                     </div>
 
                     <div className="stats-grid">
