@@ -115,7 +115,7 @@
     <script type="text/babel">
         const { useState, useEffect, useMemo, useRef } = React;
 
-        const TideChart = ({ data, threshold, title, comparisonData, showCurrentTime }) => {
+        const TideChart = ({ data, threshold, title, comparisonData, showCurrentTime, showDifference }) => {
             const canvasRef = useRef(null);
             const chartRef = useRef(null);
 
@@ -156,12 +156,21 @@
                 observedGradient.addColorStop(0, 'rgba(16, 185, 129, 0.3)');
                 observedGradient.addColorStop(1, 'rgba(16, 185, 129, 0.05)');
 
+                // 偏差用グラデーション（正の値）
+                const positiveGradient = ctx.createLinearGradient(0, 0, 0, 400);
+                positiveGradient.addColorStop(0, 'rgba(239, 68, 68, 0.3)');
+                positiveGradient.addColorStop(1, 'rgba(239, 68, 68, 0.05)');
+
+                // 偏差用グラデーション（負の値）
+                const negativeGradient = ctx.createLinearGradient(0, 0, 0, 400);
+                negativeGradient.addColorStop(0, 'rgba(59, 130, 246, 0.3)');
+                negativeGradient.addColorStop(1, 'rgba(59, 130, 246, 0.05)');
+
                 // データセットの準備
                 const datasets = [];
 
-                // 比較モードの場合
-                if (comparisonData && comparisonData.length > 0) {
-                    // 予測データをベースにする
+                // 偏差グラフモード
+                if (showDifference && comparisonData && comparisonData.length > 0) {
                     const predictionLabels = comparisonData.map(d => {
                         const date = new Date(d.datetime);
                         return date.toLocaleString('ja-JP', { 
@@ -171,12 +180,10 @@
                             minute: '2-digit' 
                         });
                     });
-                    const predictionValues = comparisonData.map(d => d.tide);
 
                     // 実測データを予測データの時間軸に合わせて補間
-                    const observedValues = comparisonData.map(pred => {
+                    const differenceValues = comparisonData.map(pred => {
                         const predTime = new Date(pred.datetime);
-                        // 実測データから最も近い時刻を探す
                         let closestObs = null;
                         let minDiff = Infinity;
                         
@@ -189,11 +196,69 @@
                             }
                         });
                         
-                        // 30分以内のデータがあれば使用
+                        // 30分以内のデータがあれば差分を計算（実測 - 予測）
+                        if (closestObs && minDiff < 30 * 60 * 1000) {
+                            return closestObs.tide - pred.tide;
+                        }
+                        return null;
+                    });
+
+                    // 偏差データ
+                    datasets.push({
+                        label: '潮位偏差 (実測 - 予測) cm',
+                        data: differenceValues,
+                        borderColor: 'rgb(16, 185, 129)',
+                        backgroundColor: (context) => {
+                            const value = context.parsed?.y;
+                            return value >= 0 ? 'rgba(239, 68, 68, 0.2)' : 'rgba(59, 130, 246, 0.2)';
+                        },
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 5,
+                        spanGaps: true,
+                        segment: {
+                            borderColor: (ctx) => {
+                                const value = ctx.p1.parsed.y;
+                                return value >= 0 ? 'rgb(239, 68, 68)' : 'rgb(59, 130, 246)';
+                            }
+                        }
+                    });
+
+                    labels.length = 0;
+                    labels.push(...predictionLabels);
+                }
+                // 比較モードの場合
+                else if (comparisonData && comparisonData.length > 0) {
+                    const predictionLabels = comparisonData.map(d => {
+                        const date = new Date(d.datetime);
+                        return date.toLocaleString('ja-JP', { 
+                            month: 'numeric', 
+                            day: 'numeric', 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                        });
+                    });
+                    const predictionValues = comparisonData.map(d => d.tide);
+
+                    const observedValues = comparisonData.map(pred => {
+                        const predTime = new Date(pred.datetime);
+                        let closestObs = null;
+                        let minDiff = Infinity;
+                        
+                        data.forEach(obs => {
+                            const obsTime = new Date(obs.datetime);
+                            const diff = Math.abs(predTime - obsTime);
+                            if (diff < minDiff) {
+                                minDiff = diff;
+                                closestObs = obs;
+                            }
+                        });
+                        
                         return (closestObs && minDiff < 30 * 60 * 1000) ? closestObs.tide : null;
                     });
 
-                    // 予測データ（黄色）
                     datasets.push({
                         label: '予測潮位 (cm)',
                         data: predictionValues,
@@ -207,7 +272,6 @@
                         pointHoverRadius: 5
                     });
 
-                    // 実測データ（緑）
                     datasets.push({
                         label: '実測潮位 (cm)',
                         data: observedValues,
@@ -218,14 +282,12 @@
                         tension: 0.4,
                         pointRadius: 0,
                         pointHoverRadius: 5,
-                        spanGaps: true // 欠損値を線で繋ぐ
+                        spanGaps: true
                     });
 
-                    // ラベルを予測データのものに変更
                     labels.length = 0;
                     labels.push(...predictionLabels);
                 } else {
-                    // 通常モード
                     datasets.push({
                         label: data[0]?.type === 'observed' ? '実測潮位 (cm)' : '予測潮位 (cm)',
                         data: tideValues,
@@ -239,14 +301,28 @@
                     });
                 }
 
-                // annotationプラグインを登録
                 if (!Chart.registry.plugins.get('annotation')) {
                     Chart.register(window['chartjs-plugin-annotation'].default);
                 }
 
-                // アノテーション設定
-                const annotations = {
-                    threshold: {
+                const annotations = {};
+
+                // 偏差グラフの場合はゼロラインを表示
+                if (showDifference) {
+                    annotations.zeroLine = {
+                        type: 'line',
+                        yMin: 0,
+                        yMax: 0,
+                        borderColor: 'rgb(107, 114, 128)',
+                        borderWidth: 2,
+                        label: {
+                            content: '予測値',
+                            display: true,
+                            position: 'end'
+                        }
+                    };
+                } else {
+                    annotations.threshold = {
                         type: 'line',
                         yMin: threshold,
                         yMax: threshold,
@@ -258,17 +334,13 @@
                             display: true,
                             position: 'end'
                         }
-                    }
-                };
+                    };
+                }
 
-                // 現在時刻のマーカーを追加
-                if (showCurrentTime) {
+                if (showCurrentTime && !showDifference) {
                     const now = new Date();
-                    
-                    // データから現在時刻に最も近いインデックスを探す
                     let currentIndex = -1;
                     let minDiff = Infinity;
-                    
                     const baseData = comparisonData && comparisonData.length > 0 ? comparisonData : data;
                     
                     baseData.forEach((point, index) => {
@@ -280,7 +352,6 @@
                         }
                     });
 
-                    // 2時間以内のデータがあれば表示
                     if (currentIndex !== -1 && minDiff < 2 * 60 * 60 * 1000) {
                         const currentValue = datasets[datasets.length - 1].data[currentIndex];
                         if (currentValue !== null && currentValue !== undefined) {
@@ -309,7 +380,6 @@
                     }
                 }
 
-                // チャート作成
                 chartRef.current = new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -333,7 +403,8 @@
                                     label: function(context) {
                                         const value = context.parsed.y;
                                         if (value === null) return null;
-                                        return context.dataset.label + ': ' + value + ' cm';
+                                        const sign = showDifference && value > 0 ? '+' : '';
+                                        return context.dataset.label + ': ' + sign + value + ' cm';
                                     }
                                 }
                             },
@@ -351,10 +422,10 @@
                                 }
                             },
                             y: {
-                                beginAtZero: true,
+                                beginAtZero: !showDifference,
                                 title: {
                                     display: true,
-                                    text: '潮位 (cm)'
+                                    text: showDifference ? '偏差 (cm)' : '潮位 (cm)'
                                 }
                             }
                         }
@@ -366,7 +437,7 @@
                         chartRef.current.destroy();
                     }
                 };
-            }, [data, threshold, comparisonData, showCurrentTime]);
+            }, [data, threshold, comparisonData, showCurrentTime, showDifference]);
 
             return (
                 <div style={{ position: 'relative', height: '100%', width: '100%' }}>
@@ -639,6 +710,7 @@
                                         threshold={threshold}
                                         title="比較"
                                         showCurrentTime={true}
+                                        showDifference={false}
                                     />
                                 ) : activeTab === 'observed' ? (
                                     <TideChart 
@@ -646,6 +718,7 @@
                                         threshold={threshold}
                                         title="実測値"
                                         showCurrentTime={false}
+                                        showDifference={false}
                                     />
                                 ) : (
                                     <TideChart 
@@ -653,6 +726,7 @@
                                         threshold={threshold}
                                         title="予測値"
                                         showCurrentTime={true}
+                                        showDifference={false}
                                     />
                                 )}
                             </div>
@@ -661,6 +735,29 @@
                             <div className="scroll-hint">← スワイプして全体を表示 →</div>
                         )}
                     </div>
+
+                    {activeTab === 'comparison' && todayObserved.length > 0 && todayPrediction.length > 0 && (
+                        <div className="card">
+                            <h2 style={{fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '1rem'}}>
+                                📉 潮位偏差（実測 - 予測）
+                            </h2>
+                            <div className="chart-wrapper no-scroll">
+                                <div className="chart-container full-width">
+                                    <TideChart 
+                                        data={todayObserved}
+                                        comparisonData={todayPrediction}
+                                        threshold={threshold}
+                                        title="偏差"
+                                        showCurrentTime={false}
+                                        showDifference={true}
+                                    />
+                                </div>
+                            </div>
+                            <div style={{fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem', textAlign: 'center'}}>
+                                🔴 正の値: 実測が予測より高い ／ 🔵 負の値: 実測が予測より低い
+                            </div>
+                        </div>
+                    )}
 
                     <div className="stats-grid">
                         <div className="stat-card">
