@@ -1,45 +1,5 @@
 [
   {
-    "datetime": "2025-12-05T05:30:00",
-    "tide": 130,
-    "type": "observed"
-  },
-  {
-    "datetime": "2025-12-05T05:35:00",
-    "tide": 134,
-    "type": "observed"
-  },
-  {
-    "datetime": "2025-12-05T05:40:00",
-    "tide": 137,
-    "type": "observed"
-  },
-  {
-    "datetime": "2025-12-05T05:45:00",
-    "tide": 142,
-    "type": "observed"
-  },
-  {
-    "datetime": "2025-12-05T05:50:00",
-    "tide": 149,
-    "type": "observed"
-  },
-  {
-    "datetime": "2025-12-05T05:55:00",
-    "tide": 154,
-    "type": "observed"
-  },
-  {
-    "datetime": "2025-12-05T06:00:00",
-    "tide": 157,
-    "type": "observed"
-  },
-  {
-    "datetime": "2025-12-05T06:05:00",
-    "tide": 160,
-    "type": "observed"
-  },
-  {
     "datetime": "2025-12-05T06:10:00",
     "tide": 164,
     "type": "observed"
@@ -1437,6 +1397,46 @@
   {
     "datetime": "2025-12-06T07:20:00",
     "tide": 184,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-06T07:25:00",
+    "tide": 187,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-06T07:30:00",
+    "tide": 190,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-06T07:35:00",
+    "tide": 194,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-06T07:40:00",
+    "tide": 198,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-06T07:45:00",
+    "tide": 202,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-06T07:50:00",
+    "tide": 205,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-06T07:55:00",
+    "tide": 209,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-06T08:00:00",
+    "tide": 214,
     "type": "observed"
   }
 ]
