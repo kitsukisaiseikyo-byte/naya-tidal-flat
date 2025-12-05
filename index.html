@@ -146,34 +146,92 @@
                 gradient.addColorStop(0, 'rgba(59, 130, 246, 0.5)');
                 gradient.addColorStop(1, 'rgba(59, 130, 246, 0.1)');
 
-                // グラデーション作成（比較データ用）
+                // グラデーション作成（比較データ用 - 予測）
                 const comparisonGradient = ctx.createLinearGradient(0, 0, 0, 400);
                 comparisonGradient.addColorStop(0, 'rgba(251, 191, 36, 0.3)');
                 comparisonGradient.addColorStop(1, 'rgba(251, 191, 36, 0.05)');
 
-                // データセットの準備
-                const datasets = [{
-                    label: title === '実測値' ? '実測潮位 (cm)' : '予測潮位 (cm)',
-                    data: tideValues,
-                    borderColor: data[0]?.type === 'observed' ? 'rgb(16, 185, 129)' : 'rgb(59, 130, 246)',
-                    backgroundColor: data[0]?.type === 'observed' ? 'rgba(16, 185, 129, 0.3)' : gradient,
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 0,
-                    pointHoverRadius: 5
-                }];
+                // 実測用グラデーション
+                const observedGradient = ctx.createLinearGradient(0, 0, 0, 400);
+                observedGradient.addColorStop(0, 'rgba(16, 185, 129, 0.3)');
+                observedGradient.addColorStop(1, 'rgba(16, 185, 129, 0.05)');
 
-                // 比較データがある場合は追加
+                // データセットの準備
+                const datasets = [];
+
+                // 比較モードの場合
                 if (comparisonData && comparisonData.length > 0) {
-                    const comparisonValues = comparisonData.map(d => d.tide);
+                    // 予測データをベースにする
+                    const predictionLabels = comparisonData.map(d => {
+                        const date = new Date(d.datetime);
+                        return date.toLocaleString('ja-JP', { 
+                            month: 'numeric', 
+                            day: 'numeric', 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                        });
+                    });
+                    const predictionValues = comparisonData.map(d => d.tide);
+
+                    // 実測データを予測データの時間軸に合わせて補間
+                    const observedValues = comparisonData.map(pred => {
+                        const predTime = new Date(pred.datetime);
+                        // 実測データから最も近い時刻を探す
+                        let closestObs = null;
+                        let minDiff = Infinity;
+                        
+                        data.forEach(obs => {
+                            const obsTime = new Date(obs.datetime);
+                            const diff = Math.abs(predTime - obsTime);
+                            if (diff < minDiff) {
+                                minDiff = diff;
+                                closestObs = obs;
+                            }
+                        });
+                        
+                        // 30分以内のデータがあれば使用
+                        return (closestObs && minDiff < 30 * 60 * 1000) ? closestObs.tide : null;
+                    });
+
+                    // 予測データ（黄色）
                     datasets.push({
                         label: '予測潮位 (cm)',
-                        data: comparisonValues,
+                        data: predictionValues,
                         borderColor: 'rgb(251, 191, 36)',
                         backgroundColor: comparisonGradient,
                         borderWidth: 2,
                         borderDash: [5, 5],
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 5
+                    });
+
+                    // 実測データ（緑）
+                    datasets.push({
+                        label: '実測潮位 (cm)',
+                        data: observedValues,
+                        borderColor: 'rgb(16, 185, 129)',
+                        backgroundColor: observedGradient,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 5,
+                        spanGaps: true // 欠損値を線で繋ぐ
+                    });
+
+                    // ラベルを予測データのものに変更
+                    labels.length = 0;
+                    labels.push(...predictionLabels);
+                } else {
+                    // 通常モード
+                    datasets.push({
+                        label: data[0]?.type === 'observed' ? '実測潮位 (cm)' : '予測潮位 (cm)',
+                        data: tideValues,
+                        borderColor: data[0]?.type === 'observed' ? 'rgb(16, 185, 129)' : 'rgb(59, 130, 246)',
+                        backgroundColor: data[0]?.type === 'observed' ? observedGradient : gradient,
+                        borderWidth: 2,
                         fill: true,
                         tension: 0.4,
                         pointRadius: 0,
@@ -206,32 +264,48 @@
                 // 現在時刻のマーカーを追加
                 if (showCurrentTime) {
                     const now = new Date();
-                    const nowStr = now.toLocaleString('ja-JP', { 
-                        month: 'numeric', 
-                        day: 'numeric', 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                    });
-                    const currentIndex = labels.findIndex(label => {
-                        const labelDate = new Date(data[labels.indexOf(label)]?.datetime);
-                        return Math.abs(labelDate - now) < 5 * 60 * 1000; // 5分以内
+                    
+                    // データから現在時刻に最も近いインデックスを探す
+                    let currentIndex = -1;
+                    let minDiff = Infinity;
+                    
+                    const baseData = comparisonData && comparisonData.length > 0 ? comparisonData : data;
+                    
+                    baseData.forEach((point, index) => {
+                        const pointTime = new Date(point.datetime);
+                        const diff = Math.abs(pointTime - now);
+                        if (diff < minDiff) {
+                            minDiff = diff;
+                            currentIndex = index;
+                        }
                     });
 
-                    if (currentIndex !== -1) {
-                        annotations.currentTime = {
-                            type: 'point',
-                            xValue: currentIndex,
-                            yValue: tideValues[currentIndex],
-                            backgroundColor: 'rgb(239, 68, 68)',
-                            borderColor: 'white',
-                            borderWidth: 2,
-                            radius: 8,
-                            label: {
-                                content: '現在',
-                                display: true,
-                                position: 'top'
-                            }
-                        };
+                    // 2時間以内のデータがあれば表示
+                    if (currentIndex !== -1 && minDiff < 2 * 60 * 60 * 1000) {
+                        const currentValue = datasets[datasets.length - 1].data[currentIndex];
+                        if (currentValue !== null && currentValue !== undefined) {
+                            annotations.currentTime = {
+                                type: 'point',
+                                xValue: currentIndex,
+                                yValue: currentValue,
+                                backgroundColor: 'rgb(239, 68, 68)',
+                                borderColor: 'white',
+                                borderWidth: 3,
+                                radius: 8,
+                                label: {
+                                    content: '現在',
+                                    display: true,
+                                    position: 'top',
+                                    backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                                    color: 'white',
+                                    font: {
+                                        size: 11,
+                                        weight: 'bold'
+                                    },
+                                    padding: 4
+                                }
+                            };
+                        }
                     }
                 }
 
@@ -257,7 +331,9 @@
                             tooltip: {
                                 callbacks: {
                                     label: function(context) {
-                                        return context.dataset.label + ': ' + context.parsed.y + ' cm';
+                                        const value = context.parsed.y;
+                                        if (value === null) return null;
+                                        return context.dataset.label + ': ' + value + ' cm';
                                     }
                                 }
                             },
@@ -558,8 +634,8 @@
                             <div className={`chart-container ${activeTab === 'observed' || activeTab === 'comparison' ? 'full-width' : ''}`}>
                                 {activeTab === 'comparison' ? (
                                     <TideChart 
-                                        data={todayObserved.length > 0 ? todayObserved : todayPrediction}
-                                        comparisonData={todayObserved.length > 0 ? todayPrediction : null}
+                                        data={todayObserved}
+                                        comparisonData={todayPrediction}
                                         threshold={threshold}
                                         title="比較"
                                         showCurrentTime={true}
