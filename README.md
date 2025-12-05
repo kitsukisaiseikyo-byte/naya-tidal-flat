@@ -1,7 +1,9 @@
 # 🏖️ 納屋港 干潟出現予測システム
 
 大分県杵築市納屋港における干潟の出現を予測する自動更新システムです。
+
 予測データVS実測データ比較を追加しました。・・・12/5
+
 公開URL:https://kitsukisaiseikyo-byte.github.io/naya-tidal-flat/
 
 ## 📊 機能
