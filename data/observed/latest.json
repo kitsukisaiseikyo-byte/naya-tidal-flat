@@ -523,5 +523,25 @@
     "datetime": "2025-12-06T10:00:00",
     "tide": 245,
     "type": "observed"
+  },
+  {
+    "datetime": "2025-12-06T10:05:00",
+    "tide": 246,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-06T10:10:00",
+    "tide": 246,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-06T10:15:00",
+    "tide": 245,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-06T10:20:00",
+    "tide": 246,
+    "type": "observed"
   }
 ]
