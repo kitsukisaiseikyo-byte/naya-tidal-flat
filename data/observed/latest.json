@@ -1,10 +1,5 @@
 [
   {
-    "datetime": "2025-12-06T00:30:00",
-    "tide": 44,
-    "type": "observed"
-  },
-  {
     "datetime": "2025-12-06T00:35:00",
     "tide": 40,
     "type": "observed"
@@ -1437,6 +1432,11 @@
   {
     "datetime": "2025-12-07T02:20:00",
     "tide": 5,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-07T02:25:00",
+    "tide": 2,
     "type": "observed"
   }
 ]
