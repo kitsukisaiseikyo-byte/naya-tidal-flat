@@ -1323,5 +1323,30 @@
     "datetime": "2025-12-06T23:20:00",
     "tide": 138,
     "type": "observed"
+  },
+  {
+    "datetime": "2025-12-07T00:00:00",
+    "tide": 104,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-07T00:05:00",
+    "tide": 100,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-07T00:10:00",
+    "tide": 96,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-07T00:15:00",
+    "tide": 91,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-07T00:20:00",
+    "tide": 87,
+    "type": "observed"
   }
 ]
