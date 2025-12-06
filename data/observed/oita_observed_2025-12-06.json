@@ -1533,5 +1533,25 @@
     "datetime": "2025-12-07T05:00:00",
     "tide": 19,
     "type": "observed"
+  },
+  {
+    "datetime": "2025-12-07T05:05:00",
+    "tide": 21,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-07T05:10:00",
+    "tide": 25,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-07T05:15:00",
+    "tide": 28,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-07T05:20:00",
+    "tide": 32,
+    "type": "observed"
   }
 ]
