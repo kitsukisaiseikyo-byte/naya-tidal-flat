@@ -1263,5 +1263,25 @@
     "datetime": "2025-12-08T21:00:00",
     "tide": 187,
     "type": "observed"
+  },
+  {
+    "datetime": "2025-12-08T21:05:00",
+    "tide": 189,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-08T21:10:00",
+    "tide": 191,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-08T21:15:00",
+    "tide": 193,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-08T21:20:00",
+    "tide": 195,
+    "type": "observed"
   }
 ]
