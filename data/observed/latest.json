@@ -783,5 +783,25 @@
     "datetime": "2025-12-10T13:00:00",
     "tide": 206,
     "type": "observed"
+  },
+  {
+    "datetime": "2025-12-10T13:05:00",
+    "tide": 205,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-10T13:10:00",
+    "tide": 205,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-10T13:15:00",
+    "tide": 204,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-10T13:20:00",
+    "tide": 205,
+    "type": "observed"
   }
 ]
