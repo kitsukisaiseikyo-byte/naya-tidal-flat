@@ -1263,5 +1263,25 @@
     "datetime": "2025-12-11T21:00:00",
     "tide": 115,
     "type": "observed"
+  },
+  {
+    "datetime": "2025-12-11T21:05:00",
+    "tide": 116,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-11T21:10:00",
+    "tide": 116,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-11T21:15:00",
+    "tide": 117,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-11T21:20:00",
+    "tide": 119,
+    "type": "observed"
   }
 ]
