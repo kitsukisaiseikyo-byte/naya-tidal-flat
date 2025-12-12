@@ -1888,5 +1888,25 @@
     "datetime": "2025-12-13T08:00:00",
     "tide": 97,
     "type": "observed"
+  },
+  {
+    "datetime": "2025-12-13T08:05:00",
+    "tide": 98,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-13T08:10:00",
+    "tide": 98,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-13T08:15:00",
+    "tide": 97,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-13T08:20:00",
+    "tide": 95,
+    "type": "observed"
   }
 ]
