@@ -1403,5 +1403,30 @@
     "datetime": "2025-12-17T23:20:00",
     "tide": 64,
     "type": "observed"
+  },
+  {
+    "datetime": "2025-12-18T00:00:00",
+    "tide": 42,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-18T00:05:00",
+    "tide": 41,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-18T00:10:00",
+    "tide": 40,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-18T00:15:00",
+    "tide": 39,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-18T00:20:00",
+    "tide": 38,
+    "type": "observed"
   }
 ]
