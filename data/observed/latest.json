@@ -1323,5 +1323,25 @@
     "datetime": "2025-12-17T22:00:00",
     "tide": 102,
     "type": "observed"
+  },
+  {
+    "datetime": "2025-12-17T22:05:00",
+    "tide": 99,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-17T22:10:00",
+    "tide": 96,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-17T22:15:00",
+    "tide": 93,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-17T22:20:00",
+    "tide": 91,
+    "type": "observed"
   }
 ]
