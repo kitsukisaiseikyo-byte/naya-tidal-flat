@@ -1668,5 +1668,45 @@
     "datetime": "2025-12-21T04:20:00",
     "tide": 48,
     "type": "observed"
+  },
+  {
+    "datetime": "2025-12-21T04:25:00",
+    "tide": 51,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-21T04:30:00",
+    "tide": 55,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-21T04:35:00",
+    "tide": 58,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-21T04:40:00",
+    "tide": 60,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-21T04:45:00",
+    "tide": 63,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-21T04:50:00",
+    "tide": 65,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-21T04:55:00",
+    "tide": 69,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-21T05:00:00",
+    "tide": 71,
+    "type": "observed"
   }
 ]
