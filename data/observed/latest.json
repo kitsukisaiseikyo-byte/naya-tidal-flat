@@ -723,5 +723,25 @@
     "datetime": "2025-12-20T12:00:00",
     "tide": 178,
     "type": "observed"
+  },
+  {
+    "datetime": "2025-12-20T12:05:00",
+    "tide": 175,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-20T12:10:00",
+    "tide": 171,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-20T12:15:00",
+    "tide": 168,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-20T12:20:00",
+    "tide": 165,
+    "type": "observed"
   }
 ]
