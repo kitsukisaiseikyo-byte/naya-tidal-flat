@@ -1263,5 +1263,25 @@
     "datetime": "2025-12-28T21:00:00",
     "tide": 80,
     "type": "observed"
+  },
+  {
+    "datetime": "2025-12-28T21:05:00",
+    "tide": 81,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-28T21:10:00",
+    "tide": 80,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-28T21:15:00",
+    "tide": 80,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-28T21:20:00",
+    "tide": 80,
+    "type": "observed"
   }
 ]
