@@ -543,5 +543,25 @@
     "datetime": "2025-12-29T09:00:00",
     "tide": 102,
     "type": "observed"
+  },
+  {
+    "datetime": "2025-12-29T09:05:00",
+    "tide": 103,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-29T09:10:00",
+    "tide": 104,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-29T09:15:00",
+    "tide": 104,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-29T09:20:00",
+    "tide": 105,
+    "type": "observed"
   }
 ]
