@@ -1343,5 +1343,45 @@
     "datetime": "2025-12-30T22:20:00",
     "tide": 40,
     "type": "observed"
+  },
+  {
+    "datetime": "2025-12-30T22:25:00",
+    "tide": 40,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-30T22:30:00",
+    "tide": 41,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-30T22:35:00",
+    "tide": 40,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-30T22:40:00",
+    "tide": 40,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-30T22:45:00",
+    "tide": 39,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-30T22:50:00",
+    "tide": 39,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-30T22:55:00",
+    "tide": 40,
+    "type": "observed"
+  },
+  {
+    "datetime": "2025-12-30T23:00:00",
+    "tide": 39,
+    "type": "observed"
   }
 ]
