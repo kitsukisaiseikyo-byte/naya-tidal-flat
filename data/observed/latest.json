@@ -1,10 +1,5 @@
 [
   {
-    "datetime": "2026-01-02T00:20:00",
-    "tide": 13,
-    "type": "observed"
-  },
-  {
     "datetime": "2026-01-02T00:25:00",
     "tide": 12,
     "type": "observed"
@@ -1436,6 +1431,11 @@
   },
   {
     "datetime": "2026-01-03T00:50:00",
+    "tide": 0,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-01-03T02:20:00",
     "tide": 0,
     "type": "observed"
   }
