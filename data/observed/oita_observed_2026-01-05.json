@@ -1763,5 +1763,25 @@
     "datetime": "2026-01-06T07:00:00",
     "tide": 85,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-01-06T07:05:00",
+    "tide": 89,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-01-06T07:10:00",
+    "tide": 92,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-01-06T07:15:00",
+    "tide": 96,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-01-06T07:20:00",
+    "tide": 101,
+    "type": "observed"
   }
 ]
