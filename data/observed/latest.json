@@ -1403,5 +1403,30 @@
     "datetime": "2026-01-19T23:20:00",
     "tide": 129,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-01-20T00:00:00",
+    "tide": 101,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-01-20T00:05:00",
+    "tide": 97,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-01-20T00:10:00",
+    "tide": 93,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-01-20T00:15:00",
+    "tide": 90,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-01-20T00:20:00",
+    "tide": 87,
+    "type": "observed"
   }
 ]
