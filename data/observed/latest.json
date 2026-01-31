@@ -1318,5 +1318,20 @@
     "datetime": "2026-02-01T00:20:00",
     "tide": 7,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-02-01T00:25:00",
+    "tide": 4,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-01T00:30:00",
+    "tide": 3,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-01T00:35:00",
+    "tide": 0,
+    "type": "observed"
   }
 ]
