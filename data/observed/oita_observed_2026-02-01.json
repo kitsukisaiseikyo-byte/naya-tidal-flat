@@ -1458,5 +1458,25 @@
     "datetime": "2026-02-02T05:00:00",
     "tide": 52,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-02-02T05:05:00",
+    "tide": 55,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-02T05:10:00",
+    "tide": 59,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-02T05:15:00",
+    "tide": 63,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-02T05:20:00",
+    "tide": 67,
+    "type": "observed"
   }
 ]
