@@ -893,5 +893,25 @@
     "datetime": "2026-02-01T17:00:00",
     "tide": 137,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-02-01T17:05:00",
+    "tide": 140,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-01T17:10:00",
+    "tide": 142,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-01T17:15:00",
+    "tide": 145,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-01T17:20:00",
+    "tide": 147,
+    "type": "observed"
   }
 ]
