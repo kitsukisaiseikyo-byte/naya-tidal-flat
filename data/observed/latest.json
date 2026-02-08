@@ -903,5 +903,25 @@
     "datetime": "2026-02-08T15:00:00",
     "tide": 124,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-02-08T15:05:00",
+    "tide": 121,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-08T15:10:00",
+    "tide": 117,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-08T15:15:00",
+    "tide": 118,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-08T15:20:00",
+    "tide": 116,
+    "type": "observed"
   }
 ]
