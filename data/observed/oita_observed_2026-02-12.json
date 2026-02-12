@@ -1468,5 +1468,30 @@
     "datetime": "2026-02-13T01:00:00",
     "tide": 74,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-02-13T01:05:00",
+    "tide": 76,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-13T01:10:00",
+    "tide": 75,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-13T01:15:00",
+    "tide": 76,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-13T01:20:00",
+    "tide": 77,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-13T01:25:00",
+    "tide": 78,
+    "type": "observed"
   }
 ]
