@@ -663,5 +663,25 @@
     "datetime": "2026-02-13T11:00:00",
     "tide": 146,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-02-13T11:05:00",
+    "tide": 145,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-13T11:10:00",
+    "tide": 144,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-13T11:15:00",
+    "tide": 143,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-13T11:20:00",
+    "tide": 143,
+    "type": "observed"
   }
 ]
