@@ -1383,5 +1383,25 @@
     "datetime": "2026-02-18T23:00:00",
     "tide": 162,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-02-18T23:05:00",
+    "tide": 159,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-18T23:10:00",
+    "tide": 157,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-18T23:15:00",
+    "tide": 154,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-02-18T23:20:00",
+    "tide": 151,
+    "type": "observed"
   }
 ]
