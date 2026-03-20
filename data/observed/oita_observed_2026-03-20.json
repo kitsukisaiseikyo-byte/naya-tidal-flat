@@ -1023,5 +1023,25 @@
     "datetime": "2026-03-20T17:00:00",
     "tide": 74,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-03-20T17:05:00",
+    "tide": 77,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-03-20T17:10:00",
+    "tide": 80,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-03-20T17:15:00",
+    "tide": 83,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-03-20T17:20:00",
+    "tide": 85,
+    "type": "observed"
   }
 ]
