@@ -663,5 +663,25 @@
     "datetime": "2026-03-24T11:00:00",
     "tide": 200,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-03-24T11:05:00",
+    "tide": 200,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-03-24T11:10:00",
+    "tide": 200,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-03-24T11:15:00",
+    "tide": 198,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-03-24T11:20:00",
+    "tide": 198,
+    "type": "observed"
   }
 ]
