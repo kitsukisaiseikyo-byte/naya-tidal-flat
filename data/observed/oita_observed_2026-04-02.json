@@ -968,5 +968,20 @@
     "datetime": "2026-04-02T16:05:00",
     "tide": 59,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-04-02T16:10:00",
+    "tide": 61,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-04-02T16:15:00",
+    "tide": 64,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-04-02T16:20:00",
+    "tide": 66,
+    "type": "observed"
   }
 ]
