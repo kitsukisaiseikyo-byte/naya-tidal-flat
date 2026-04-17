@@ -723,5 +723,25 @@
     "datetime": "2026-04-17T12:00:00",
     "tide": 80,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-04-17T12:05:00",
+    "tide": 76,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-04-17T12:10:00",
+    "tide": 72,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-04-17T12:15:00",
+    "tide": 69,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-04-17T12:20:00",
+    "tide": 69,
+    "type": "observed"
   }
 ]
