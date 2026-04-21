@@ -1828,5 +1828,25 @@
     "datetime": "2026-04-22T07:00:00",
     "tide": 141,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-04-22T07:05:00",
+    "tide": 143,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-04-22T07:10:00",
+    "tide": 144,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-04-22T07:15:00",
+    "tide": 145,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-04-22T07:20:00",
+    "tide": 146,
+    "type": "observed"
   }
 ]
