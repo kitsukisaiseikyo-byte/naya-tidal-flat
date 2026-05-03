@@ -1323,5 +1323,25 @@
     "datetime": "2026-05-03T22:00:00",
     "tide": 222,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-05-03T22:05:00",
+    "tide": 223,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-03T22:10:00",
+    "tide": 221,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-03T22:15:00",
+    "tide": 221,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-03T22:20:00",
+    "tide": 220,
+    "type": "observed"
   }
 ]
