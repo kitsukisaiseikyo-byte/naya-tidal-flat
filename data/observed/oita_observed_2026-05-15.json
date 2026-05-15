@@ -563,5 +563,45 @@
     "datetime": "2026-05-15T09:20:00",
     "tide": 140,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-05-15T09:25:00",
+    "tide": 136,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-15T09:30:00",
+    "tide": 133,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-15T09:35:00",
+    "tide": 130,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-15T09:40:00",
+    "tide": 126,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-15T09:45:00",
+    "tide": 122,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-15T09:50:00",
+    "tide": 116,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-15T09:55:00",
+    "tide": 113,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-15T10:00:00",
+    "tide": 108,
+    "type": "observed"
   }
 ]
