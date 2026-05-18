@@ -1058,5 +1058,25 @@
     "datetime": "2026-05-18T19:00:00",
     "tide": 136,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-05-18T19:05:00",
+    "tide": 142,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-18T19:10:00",
+    "tide": 147,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-18T19:15:00",
+    "tide": 151,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-18T19:20:00",
+    "tide": 156,
+    "type": "observed"
   }
 ]
