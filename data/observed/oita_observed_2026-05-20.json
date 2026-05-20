@@ -1528,5 +1528,30 @@
     "datetime": "2026-05-21T02:00:00",
     "tide": 208,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-05-21T02:05:00",
+    "tide": 206,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-21T02:10:00",
+    "tide": 205,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-21T02:15:00",
+    "tide": 201,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-21T02:20:00",
+    "tide": 201,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-21T02:25:00",
+    "tide": 198,
+    "type": "observed"
   }
 ]
