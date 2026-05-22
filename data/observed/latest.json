@@ -603,5 +603,25 @@
     "datetime": "2026-05-22T10:00:00",
     "tide": 169,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-05-22T10:05:00",
+    "tide": 170,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-22T10:10:00",
+    "tide": 172,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-22T10:15:00",
+    "tide": 173,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-05-22T10:20:00",
+    "tide": 175,
+    "type": "observed"
   }
 ]
