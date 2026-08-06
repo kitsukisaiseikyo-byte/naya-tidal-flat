@@ -1908,5 +1908,25 @@
     "datetime": "2026-08-07T08:10:00",
     "tide": 90,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-08-07T08:15:00",
+    "tide": 89,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-08-07T08:20:00",
+    "tide": 89,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-08-07T08:25:00",
+    "tide": 90,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-08-07T08:30:00",
+    "tide": 90,
+    "type": "observed"
   }
 ]
