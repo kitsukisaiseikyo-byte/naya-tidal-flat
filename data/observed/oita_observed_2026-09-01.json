@@ -1448,5 +1448,35 @@
     "datetime": "2026-09-02T00:30:00",
     "tide": 207,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-09-02T00:35:00",
+    "tide": 204,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-02T00:40:00",
+    "tide": 202,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-02T00:45:00",
+    "tide": 199,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-02T00:50:00",
+    "tide": 197,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-02T00:55:00",
+    "tide": 193,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-02T01:00:00",
+    "tide": 190,
+    "type": "observed"
   }
 ]
