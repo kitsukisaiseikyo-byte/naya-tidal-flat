@@ -528,5 +528,25 @@
     "datetime": "2026-09-03T08:45:00",
     "tide": 126,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-09-03T10:15:00",
+    "tide": 180,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-03T10:20:00",
+    "tide": 183,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-03T10:25:00",
+    "tide": 187,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-03T10:30:00",
+    "tide": 189,
+    "type": "observed"
   }
 ]
