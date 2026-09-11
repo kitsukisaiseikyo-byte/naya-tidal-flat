@@ -693,5 +693,35 @@
     "datetime": "2026-09-11T11:30:00",
     "tide": 134,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-09-11T11:35:00",
+    "tide": 130,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-11T11:40:00",
+    "tide": 124,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-11T11:45:00",
+    "tide": 121,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-11T11:50:00",
+    "tide": 117,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-11T11:55:00",
+    "tide": 113,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-11T12:00:00",
+    "tide": 109,
+    "type": "observed"
   }
 ]
