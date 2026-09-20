@@ -1873,5 +1873,30 @@
     "datetime": "2026-09-21T07:35:00",
     "tide": 135,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-09-21T07:40:00",
+    "tide": 133,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-21T07:45:00",
+    "tide": 132,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-21T07:50:00",
+    "tide": 131,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-21T07:55:00",
+    "tide": 131,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-21T08:00:00",
+    "tide": 130,
+    "type": "observed"
   }
 ]
