@@ -573,5 +573,30 @@
     "datetime": "2026-09-29T09:30:00",
     "tide": 249,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-09-29T09:35:00",
+    "tide": 252,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-29T09:40:00",
+    "tide": 252,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-29T09:45:00",
+    "tide": 252,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-29T09:50:00",
+    "tide": 250,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-09-29T09:55:00",
+    "tide": 250,
+    "type": "observed"
   }
 ]
