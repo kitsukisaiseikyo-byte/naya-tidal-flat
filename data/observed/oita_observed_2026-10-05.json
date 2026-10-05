@@ -1423,5 +1423,30 @@
     "datetime": "2026-10-06T00:05:00",
     "tide": 162,
     "type": "observed"
+  },
+  {
+    "datetime": "2026-10-06T00:10:00",
+    "tide": 163,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-10-06T00:15:00",
+    "tide": 163,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-10-06T00:20:00",
+    "tide": 163,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-10-06T00:25:00",
+    "tide": 163,
+    "type": "observed"
+  },
+  {
+    "datetime": "2026-10-06T00:30:00",
+    "tide": 163,
+    "type": "observed"
   }
 ]
